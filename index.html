@@ -20,7 +20,7 @@
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            justify-content: center; 
+            justify-content: flex-start; /* 상단부터 채우도록 */
             min-height: 100vh;
             margin: 0; 
             overflow-x: hidden;
@@ -30,9 +30,10 @@
 
         /* --- 1단계: 파칭코 화면 스타일 --- */
         #game-screen { 
+            margin-top: 10vh;
             text-align: center; 
             width: 90%; 
-            max-width: 800px; 
+            max-width: 600px; 
             border: 5px double #ffd700; 
             padding: 40px 20px; 
             border-radius: 20px; 
@@ -43,35 +44,44 @@
         h1.main-title { 
             color: #ffffff; 
             text-shadow: 3px 3px #ff4500, 6px 6px rgba(0,0,0,0.5); 
-            font-size: clamp(2rem, 8vw, 5rem); 
-            margin: 20px 0 40px 0; 
+            font-size: clamp(2rem, 8vw, 4rem); 
+            margin: 0 0 30px 0; 
             transform: rotate(-7deg); 
             font-weight: 900;
-            line-height: 1.2;
         }
 
-        .slot-machine { font-size: clamp(50px, 15vw, 100px); font-weight: bold; color: #ff0055; margin: 20px 0; text-shadow: 0 0 10px #ff0055; }
-        .pachinko-btn { padding: 12px 35px; font-size: 20px; cursor: pointer; background: #ffd700; border: none; border-radius: 50px; font-weight: bold; box-shadow: 0 5px #b8860b; color: #000; }
-        #status-text { font-size: 24px; color: #00ffcc; margin-bottom: 10px; font-weight: bold; }
+        .slot-machine { font-size: 80px; font-weight: bold; color: #ff0055; margin: 20px 0; text-shadow: 0 0 10px #ff0055; }
+        .pachinko-btn { padding: 15px 40px; font-size: 22px; cursor: pointer; background: #ffd700; border: none; border-radius: 50px; font-weight: bold; box-shadow: 0 5px #b8860b; color: #000; }
 
-        /* --- 2단계: 레거시 화면 스타일 --- */
-        #legacy-screen { width: 100%; display: flex; flex-direction: column; align-items: center; background-color: var(--bg-color); min-height: 100vh; }
-        .legacy-title { font-size: 40px; letter-spacing: 2px; margin: 40px 0; text-transform: uppercase; font-weight: 800; color: #fff; }
+        /* --- 2단계: 결과 화면 (반응형 그리드) --- */
+        #legacy-screen { 
+            width: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            background-color: var(--bg-color); 
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+        .legacy-title { font-size: clamp(24px, 5vw, 40px); letter-spacing: 2px; margin: 30px 0; text-transform: uppercase; font-weight: 800; color: #fff; }
         .legacy-title span { color: var(--accent-blue); }
 
         .container { 
             display: flex; 
-            gap: 10px; 
-            padding: 10px; /* 여백 줄임 */
-            width: 98vw;   /* 화면 너비 98% 사용 */
-            max-width: 1800px; /* 최대 너비 제한 확장 */
+            flex-wrap: wrap; /* 핵심: 화면 좁으면 줄바꿈 */
+            gap: 15px; 
+            padding: 0 20px;
+            width: 100%;
+            max-width: 1400px; /* 너무 퍼지지 않게 제한 */
             justify-content: center; 
-            overflow-x: auto; 
+            box-sizing: border-box;
         }
+
         .roster-column { 
-            flex: 1; 
-            min-width: 180px; /* 카드 최소 너비를 더 크게 */
-            height: 85vh;     /* 화면 높이의 85%까지 차지하게 (기존 70~75%) */
+            flex: 1 1 calc(25% - 20px); /* 기본 한 줄에 4개 */
+            min-width: 160px; 
+            max-width: 280px; 
+            aspect-ratio: 2 / 3; /* 카드 비율 고정 */
             background: linear-gradient(180deg, rgba(10, 20, 40, 0.5) 0%, rgba(5, 10, 20, 0.8) 100%); 
             border: 1px solid var(--border-color); 
             position: relative; 
@@ -80,23 +90,38 @@
             align-items: center; 
             justify-content: center; 
             transition: 0.3s; 
-            overflow: hidden; /* 사진이 튀어나가지 않게 */
+            overflow: hidden;
+            border-radius: 10px;
         }
-        .roster-column:hover { border-color: var(--accent-blue); background: rgba(10, 20, 40, 0.8); }
+        
+        /* 아이패드/태블릿용: 한 줄에 3개씩 */
+        @media (max-width: 900px) {
+            .roster-column { flex: 1 1 calc(33.333% - 20px); }
+        }
+        /* 모바일용: 한 줄에 2개씩 */
+        @media (max-width: 500px) {
+            .roster-column { flex: 1 1 calc(50% - 20px); min-width: 140px; }
+        }
 
-        .assign-btn { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.3s; background: none; border: none; color: #5b6a71; font-family: inherit; }
-        .assign-btn:hover { color: #fff; }
-        .plus-icon { width: 45px; height: 45px; border: 1px solid currentColor; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 10px; }
-        .assign-text { font-size: 12px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; }
+        .roster-column:hover { border-color: var(--accent-blue); box-shadow: 0 0 15px rgba(0, 114, 255, 0.4); }
 
-        .filled-content { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; background-size: cover; background-position: center; }
-        .player-info { background: rgba(0, 0, 0, 0.8); width: 100%; padding: 15px 0; text-align: center; border-top: 2px solid var(--accent-blue); }
+        .assign-btn { background: none; border: none; color: #5b6a71; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
+        .plus-icon { width: 40px; height: 40px; border: 1px solid currentColor; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 10px; }
+        .assign-text { font-size: 11px; font-weight: bold; letter-spacing: 1px; }
 
-        /* 모달 스타일 */
+        .filled-content { 
+            width: 100%; height: 100%; 
+            display: flex; flex-direction: column; justify-content: flex-end; 
+            background-size: cover; background-position: center; 
+        }
+        .player-info { 
+            background: rgba(0, 0, 0, 0.85); 
+            width: 100%; padding: 12px 0; 
+            text-align: center; border-top: 2px solid var(--accent-blue); 
+        }
+
+        /* 알림창 커스텀 스타일 */
         #modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 100; }
-        .modal-content { background: var(--card-bg); padding: 30px; border: 2px solid var(--text-gold); max-width: 400px; width: 90%; text-align: center; }
-        .player-option { padding: 15px; border-bottom: 1px solid #1e2328; cursor: pointer; transition: 0.2s; }
-        .player-option:hover { background: #1e2328; color: var(--text-gold); }
     </style>
 </head>
 <body>
@@ -108,7 +133,7 @@
         </div>
 
         <div id="select-area" class="hidden">
-            <div id="status-text">인원 선택</div>
+            <div id="status-text" style="color: #00ffcc; font-size: 20px;">인원 선택</div>
             <div id="slot" class="slot-machine">?</div>
             <button id="draw-btn" class="pachinko-btn" onclick="runPachinko()">뽑기 시작!</button>
         </div>
@@ -119,21 +144,11 @@
         <div class="container" id="roster-container"></div>
     </div>
 
-    <div id="modal">
-        <div class="modal-content">
-            <h2 style="color: var(--text-gold); margin-top:0;">모집할 팀원 선택</h2>
-            <div id="player-options"></div>
-            <button onclick="closeModal()" style="margin-top: 20px; padding: 10px; width: 100%; cursor: pointer; background: #333; color: #fff; border: none;">닫기</button>
-        </div>
-    </div>
-
     <script>
         const numbers = [7, 8, 9];
         let isRunning = false;
         let maxMembers = 0;
-        let currentSlotIndex = null;
 
-        // 선수 데이터 (여기에 선수들을 추가해!)
         const players = [
             { name: "FURUSAWA RISA", img: "후리.jpg" },
             { name: "SANO AIKA", img: "아이카.jpg" },
@@ -142,28 +157,28 @@
             { name: "KAWAMOTO EMIRU", img: "에미루.jpg" },
             { name: "UMEDA MIYU", img: "미유.jpg" },
             { name: "MANABE NAGISA", img: "나베.jpg" },
-            { name: "SAKURABA HARUKA", img: "파루.jpg" }, //큐스토
+            { name: "SAKURABA HARUKA", img: "파루.jpg" },
             { name: "TSUKIASHI AMANE", img: "아마네.jpg" },
             { name: "CHINZEI SUZUKA", img: "오스즈.jpg" },
             { name: "SAKURAI YUI", img: "유이.jpg" },
             { name: "NAKAGAWA LUNA", img: "루나.jpg" },
             { name: "MANAKA MANA", img: "마나.jpg" },
             { name: "MATSUMOTO KAREN", img: "카렌.jpg" },
-            { name: "HAYASE NOEL", img: "노엘.jpg" }, //후룻파
+            { name: "HAYASE NOEL", img: "노엘.jpg" },
             { name: "MURAKAWA BIBIAN", img: "비비.jpg" },
             { name: "KIRIHARA MIZUKI", img: "키리.jpg" },
             { name: "리노 이모", img: "리노.jpg" },
             { name: "OGAWA NANAKO", img: "나나코.jpg" },
             { name: "MINAMI NATSU", img: "나츠.jpg" },
             { name: "MIYANO SHIZUKA", img: "시즈카.jpg" },
-            { name: "TACHIBANA KOTOMI", img: "콧짱.jpg" }, //칸츄
+            { name: "TACHIBANA KOTOMI", img: "콧짱.jpg" },
             { name: "OKUDA AYU", img: "아유.jpg" },
             { name: "OTOI YUI", img: "오유이.jpg" },
             { name: "KURATA NATSUKA", img: "나츠카.jpg" },
             { name: "SHIOKAWA RISE", img: "리세.jpg" },
             { name: "SHOJI NAGISA", img: "나규.jpg" },
             { name: "SHIRAISHI MAYUMI", img: "마유미.jpg" },
-            { name: "YAMAUCHI SAKINA", img: "사키나.jpg" }, //스이스테
+            { name: "YAMAUCHI SAKINA", img: "사키나.jpg" },
             { name: "ARAI COCONA", img: "코코나.jpg" },
             { name: "ENDO MARIN", img: "마린.jpg" },
             { name: "SASAHARA NANAKA", img: "나나카.jpg" },
@@ -172,7 +187,7 @@
             { name: "NAKAYAMA KOHAKU", img: "코하쿠.jpg" },
             { name: "HAGITA SORA", img: "소라.jpg" },
             { name: "MORITA AMI", img: "아미.jpg" },
-            { name: "YAMAMOTO RUSIA", img: "루시아.jpg" }// 모어스타           
+            { name: "YAMAMOTO RUSIA", img: "루시아.jpg" }
         ];
 
         function startSelection() {
@@ -188,7 +203,7 @@
             const btn = document.getElementById('draw-btn');
             const status = document.getElementById('status-text');
 
-            btn.style.display = 'none';
+            btn.style.visibility = 'hidden';
             status.innerText = "그룹의 인원은...?";
 
             let count = 0;
@@ -196,27 +211,24 @@
                 slot.innerText = numbers[Math.floor(Math.random() * numbers.length)];
                 count++;
 
-                if (count > 25) {
+                if (count > 20) {
                     clearInterval(shuffle);
                     maxMembers = parseInt(slot.innerText);
-                    slot.innerText = maxMembers;
                     slot.style.color = "#00ffcc";
-                    slot.style.textShadow = "0 0 20px #00ffcc";
-                    status.innerText = "모집 완료!"; 
+                    status.innerText = "결정되었습니다!"; 
                     isRunning = false;
                     
                     setTimeout(() => {
-                        alert("미사P, " + maxMembers + "명으로 결정!");
                         transitionToLegacy();
                     }, 800);
                 }
-            }, 60); 
+            }, 70); 
         }
 
         function transitionToLegacy() {
             document.getElementById('game-screen').classList.add('hidden');
             document.getElementById('legacy-screen').classList.remove('hidden');
-            document.body.style.backgroundColor = "var(--bg-color)"; // 배경색 변경
+            document.body.style.justifyContent = "flex-start"; 
             initRoster();
         }
 
@@ -228,7 +240,7 @@
                 col.className = 'roster-column';
                 col.id = `slot-${i}`;
                 col.innerHTML = `
-                    <button class="assign-btn" onclick="openModal(${i})">
+                    <button class="assign-btn" onclick="assignRandomPlayer(${i})">
                         <div class="plus-icon">+</div>
                         <div class="assign-text">GROUP ASSIGN</div>
                     </button>
@@ -237,46 +249,30 @@
             }
         }
 
-        function openModal(index){
-            // 1. 이미 이 자리에 선수가 채워져 있다면 중복 실행 방지
+        function assignRandomPlayer(index) {
             const currentSlot = document.getElementById(`slot-${index}`);
             if (currentSlot.querySelector('.filled-content')) return;
 
-            // 2. 현재까지 뽑힌 모든 선수들의 이름을 모은 리스트 만들기
             const currentTeamNames = Array.from(document.querySelectorAll('.player-info div:last-child'))
                                          .map(el => el.innerText);
 
-            // 3. 아직 뽑히지 않은 선수들만 골라내기 (필터링)
             const availablePlayers = players.filter(p => !currentTeamNames.includes(p.name));
 
-            // 4. 만약 더 이상 뽑을 선수가 없다면? (명단 부족)
             if (availablePlayers.length === 0) {
-                alert("더 이상 영입할 수 있는 선수가 없어! (선수 명단을 늘려줘)");
+                alert("명단에 남은 선수가 없습니다!");
                 return;
             }
 
-            // 5. 남은 선수들 중에서만 랜덤하게 하나 추출
-            const randomIndex = Math.floor(Math.random() * availablePlayers.length);
-            const selectedPlayer = availablePlayers[randomIndex];
+            const selectedPlayer = availablePlayers[Math.floor(Math.random() * availablePlayers.length)];
 
-            // 6. 바로 배정!
-            selectPlayer(index, selectedPlayer);
-        }
-
-        function selectPlayer(slotIndex, player) {
-            const slot = document.getElementById(`slot-${slotIndex}`);
-            slot.innerHTML = `
-                <div class="filled-content" style="background-image: url('${player.img}')">
+            currentSlot.innerHTML = `
+                <div class="filled-content" style="background-image: url('${selectedPlayer.img}')">
                     <div class="player-info">
-                        <div style="color: var(--text-gold); font-size: 10px; letter-spacing:1px;">MEMBER</div>
-                        <div style="font-size: 18px; font-weight: bold;">${player.name}</div>
+                        <div style="color: var(--text-gold); font-size: 10px; letter-spacing:1px; margin-bottom:3px;">MEMBER</div>
+                        <div style="font-size: clamp(14px, 2vw, 18px); font-weight: bold;">${selectedPlayer.name}</div>
                     </div>
                 </div>
             `;
-        }
-
-        function closeModal() {
-            document.getElementById('modal').style.display = 'none';
         }
     </script>
 </body>
